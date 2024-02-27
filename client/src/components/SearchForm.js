@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SignupForm = () => {
+const SearchForm = () => {
   return (
     <form>
       {}
@@ -8,4 +8,4 @@ const SignupForm = () => {
   );
 }
 
-export default SignupForm;
+export default SearchForm;
