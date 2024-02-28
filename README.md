@@ -14,10 +14,7 @@
 
 ## Description:
 
-
-
-## Installation:
-
+I have not been able to get my project to run at all. I have tried messing with the file structure and renaming files but still no luck. I keep getting parse errors on the deployed page. I have deployed a screenshot below of my error please tell me what I am doing wrong in the code it all looks right but my brain is not working when it comes to fixing the issue. 
 
 ## User Story
 
@@ -63,7 +60,7 @@ THEN I am logged out of the site and presented with a menu with the options Sear
 
 ## Screen Shot
 
-<img src="">
+<img src="client\public\Parse Errors.png">
 
 ## Questions?
 

@@ -43,7 +43,8 @@ const AppNavbar = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         aria-labelledby="signup-modal"
-      >        <Tab.Container defaultActiveKey="login">
+      >
+        <Tab.Container defaultActiveKey="login">
           <Modal.Header closeButton>
             <Modal.Title id="signup-modal">
               <Nav variant="pills">

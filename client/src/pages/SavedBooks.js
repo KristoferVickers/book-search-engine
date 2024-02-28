@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { REMOVE_BOOK } from './utils/mutations';
 import { GET_ME } from './utils/queries';
-import auth from './client/utils/auth';
+import auth from './utils/auth';
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
