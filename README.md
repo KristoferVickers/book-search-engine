@@ -5,7 +5,6 @@
 ## Table of Contents
 * [License](#license)
 * [Description](#description)
-* [Installation](#installation)
 * [User Story](#user-story)
 * [Acceptance Criteria](#acceptance-criteria)
 * [Screen Shot](#screen-shot)
