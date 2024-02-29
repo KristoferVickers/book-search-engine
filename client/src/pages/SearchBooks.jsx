@@ -1,36 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Col, Form, Button, Card, Row } from 'react-bootstrap';
-import Auth from '../utils/auth';
+import { useState, useEffect } from 'react';
+import {
+  Container,
+  Col,
+  Form,
+  Button,
+  Card,
+  Row
+} from 'react-bootstrap';
+
+import Auth from 'client/utils/auth.js';
+import { SAVE_BOOK } from "client/utils/mutations.js";
 import { useMutation } from '@apollo/client';
-import { SAVE_BOOK } from '../utils/mutations';
-import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+import { saveBookIds, getSavedBookIds } from "client/utils/localStorage";
+import { searchGoogleBooks } from 'client/utils/API';
 
 const SearchBooks = () => {
+  // create state for holding returned google api data
   const [searchedBooks, setSearchedBooks] = useState([]);
+  // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
+
+  // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  const [saveBook] = useMutation(SAVE_BOOK);
+  const [saveBook, { error, data }] = useMutation(SAVE_BOOK);
 
+  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
+  // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
   });
 
+  // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
     if (!searchInput) {
       return false;
     }
+
     try {
-      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchInput}`);
+      const response = await searchGoogleBooks(searchInput);
 
       if (!response.ok) {
         throw new Error('something went wrong!');
       }
 
       const { items } = await response.json();
-      
+
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
@@ -45,8 +62,13 @@ const SearchBooks = () => {
       console.error(err);
     }
   };
+
+  // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
+    // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+
+    // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -54,7 +76,13 @@ const SearchBooks = () => {
     }
 
     try {
-      const { data } = await saveBook( {variables: { input: { ...bookToSave}}});
+      const response = await saveBook( { variables: {...bookToSave} });
+
+      if (!response.ok) {
+        throw new Error('something went wrong!');
+      }
+
+      // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
@@ -67,6 +95,7 @@ const SearchBooks = () => {
         <Container>
           <h1>Search for Books!</h1>
           <Form onSubmit={handleFormSubmit}>
+            <Row>
               <Col xs={12} md={8}>
                 <Form.Control
                   name='searchInput'
@@ -82,6 +111,7 @@ const SearchBooks = () => {
                   Submit Search
                 </Button>
               </Col>
+            </Row>
           </Form>
         </Container>
       </div>
@@ -95,8 +125,8 @@ const SearchBooks = () => {
         <Row>
           {searchedBooks.map((book) => {
             return (
-              <Col md="4">
-                <Card key={book.bookId} border='dark'>
+              <Col md="4" key={book.bookId}>
+                <Card border='dark'>
                   {book.image ? (
                     <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
                   ) : null}
@@ -110,8 +140,8 @@ const SearchBooks = () => {
                         className='btn-block btn-info'
                         onClick={() => handleSaveBook(book.bookId)}>
                         {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
-                          ? 'This has been saved prior'
-                          : 'Save Book'}
+                          ? 'This book has already been saved!'
+                          : 'Save this Book!'}
                       </Button>
                     )}
                   </Card.Body>
