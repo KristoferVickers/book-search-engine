@@ -8,10 +8,10 @@ import {
 } from 'react-bootstrap';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { QUERY_ME } from 'client/utils/queries.js';
-import { REMOVE_BOOK } from 'client/utils/mutations';
-import Auth from "client/utils/auth";
-import { removeBookId } from 'client/utils/localStorage';
+import { QUERY_ME } from '/utils/queries.js';
+import { REMOVE_BOOK } from '/utils/mutations';
+import Auth from "/utils/auth";
+import { removeBookId } from '/utils/localStorage';
 
 
 const SavedBooks = () => {
